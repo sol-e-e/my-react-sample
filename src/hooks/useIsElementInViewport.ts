@@ -19,7 +19,7 @@ export function useIsElementInViewport(): [React.RefCallback<HTMLDivElement>, bo
         observer.observe(element);
 
         return () => observer.disconnect();
-    }, [ref]);
+    }, [element]);
 
     return [ref, isVisible];
 };
