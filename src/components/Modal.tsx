@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { useClickOutside } from "../hooks/useClickOutside";
 
 const MODAL_ROOT = "modal-root";
 
@@ -36,28 +37,23 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
   }, [isOpen]);
 
   // 모달 외부 클릭 시 닫기
-  const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (event.target === event.currentTarget) {
-      onClose();
-    }
-  };
+  useClickOutside(modalRef, () => {
+    if (isOpen) onClose();
+  });
 
   if (!isOpen) return null;
 
   return createPortal(
-    <div
-      className="relative z-10"
-      role="dialog"
-      aria-modal="true"
-      onClick={handleOverlayClick}
-    >
+    <div className="relative z-10" role="dialog" aria-modal="true">
       <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-      <div
-        ref={modalRef}
-        tabIndex={-1}
-        className="fixed inset-0 z-10 w-screen overflow-y-auto"
-      >
-        {children}
+      <div className="fixed inset-0 z-10 w-screen overflow-y-auto flex items-center justify-center">
+        <div
+          ref={modalRef}
+          tabIndex={-1}
+          className="bg-white p-6 rounded-1g max-w-md w-full"
+        >
+          {children}
+        </div>
       </div>
     </div>,
     document.getElementById(MODAL_ROOT) as HTMLElement
